@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMS Productivity Tools</title>
+    <!-- Google Fonts for premium typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <!-- AUTH SECTION -->
+    <div id="auth-container" class="card">
+        <div class="auth-box">
+            <h2>GMS Portal</h2>
+            <p>Welcome back. Please login to continue.</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="admin" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="admin123" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
+            <div id="login-error" class="error-msg"></div>
+        </div>
+    </div>
+
+    <!-- MAIN APP SECTION -->
+    <div id="app-container" style="display: none;">
+
+        <div class="main-layout">
+            <!-- SIDEBAR -->
+            <aside class="sidebar">
+                <nav class="nav-menu">
+                    <a href="#" id="tab-tfl" class="nav-item active">
+                        <span class="icon">📝</span> Payer TFL Calculator
+                    </a>
+                    <a href="#" id="tab-dos" class="nav-item">
+                        <span class="icon">🔍</span> DOS Range Calculator
+                    </a>
+                    <a href="#" id="tab-denial" class="nav-item">
+                        <span class="icon">🔖</span> Denial Reason Analyzer
+                    </a>
+                    <a href="#" id="tab-callog" class="nav-item">
+                        <span class="icon">📞</span> Payer Call Log
+                    </a>
+                    <a href="#" id="tab-prod" class="nav-item">
+                        <span class="icon">📊</span> Daily Production Counter
+                    </a>
+                    <a href="#" id="tab-time" class="nav-item">
+                        <span class="icon">🕒</span> Login Time & Break Tracker
+                    </a>
+                    <a href="#" id="tab-julian" class="nav-item">
+                        <span class="icon">📅</span> Julian Calendar Calculator
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- MAIN CONTENT -->
+            <main class="content-pane">
+
+                <!-- 1. TFL Calculator -->
+                <div id="view-tfl" class="view-section active">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+                        <h2 style="margin: 0;">Payer TFL Calculator</h2>
+                        <div style="width: 250px;">
+                            <label style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; display: block;">Output Date Format</label>
+                            <select id="tfl-format" style="padding: 0.4rem; font-size: 0.85rem;" onchange="calculateTfl()">
+                                <option value="MM/DD/YYYY">MM/DD/YYYY (e.g. 08/01/2026)</option>
+                                <option value="DD/MM/YYYY">DD/MM/YYYY (e.g. 01/08/2026)</option>
+                                <option value="WORD">Word Format (e.g. August 01, 2026)</option>
+                                <option value="DAY_WORD">Day & Word (e.g. Sat Aug 01 2026)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1.5rem; align-items: center; background: rgba(0,0,0,0.2); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-color); flex-wrap: wrap;">
+                        <div class="form-group" style="margin: 0; flex: 2; min-width: 200px;">
+                            <label>Date of Service (DOS)</label>
+                            <input type="text" id="tfl-dos" placeholder="mm/dd/yyyy" style="font-size: 1.25rem; padding: 1.25rem;" oninput="calculateTfl()">
+                        </div>
+                        
+                        <div style="font-size: 2rem; color: var(--text-secondary); font-weight: 300;">+</div>
+
+                        <div class="form-group" style="margin: 0; flex: 1; min-width: 150px;">
+                            <label>Limit (Days)</label>
+                            <input type="number" id="tfl-limit" value="120" style="font-size: 1.25rem; padding: 1.25rem; text-align: center;" oninput="calculateTfl()">
+                        </div>
+
+                        <div style="font-size: 2rem; color: var(--text-secondary); font-weight: 300;">=</div>
+
+                        <div style="flex: 2; min-width: 200px;">
+                            <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; display: block;">Deadline Date</label>
+                            <div id="tfl-result" style="font-size: 1.5rem; font-weight: 700; color: var(--accent-primary); background: rgba(139, 92, 246, 0.1); padding: 0.85rem 1rem; border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.3); min-height: 70px; display: flex; align-items: center; word-break: break-all;">
+                                --
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. DOS Range Calculator -->
+                <div id="view-dos" class="view-section" style="display:none;">
+                    <div style="margin-bottom: 2rem;">
+                        <h2 style="margin: 0;">DOS Range Calculator</h2>
+                    </div>
+
+                    <div style="display: flex; gap: 1.5rem; align-items: center; background: rgba(0,0,0,0.2); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-color); flex-wrap: wrap;">
+                        <div class="form-group" style="margin: 0; flex: 1; min-width: 180px;">
+                            <label>Start Date</label>
+                            <input type="text" id="dos-start" placeholder="mm/dd/yyyy" style="font-size: 1.25rem; padding: 1.25rem;" oninput="calculateDosRange()">
+                        </div>
+                        
+                        <div style="font-size: 2rem; color: var(--text-secondary); font-weight: 300;">-</div>
+
+                        <div class="form-group" style="margin: 0; flex: 1; min-width: 180px;">
+                            <label>End Date</label>
+                            <input type="text" id="dos-end" placeholder="mm/dd/yyyy" style="font-size: 1.25rem; padding: 1.25rem;" oninput="calculateDosRange()">
+                        </div>
+
+                        <div style="font-size: 2rem; color: var(--text-secondary); font-weight: 300;">=</div>
+
+                        <div style="flex: 1; min-width: 180px;">
+                            <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; display: block;">Difference</label>
+                            <div id="dos-result" style="font-size: 1.5rem; font-weight: 700; color: var(--accent-primary); background: rgba(139, 92, 246, 0.1); padding: 0.85rem 1rem; border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.3); min-height: 70px; display: flex; align-items: center;">
+                                --
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Denial Reason Analyzer -->
+                <div id="view-denial" class="view-section" style="display:none;">
+                    <h2>Denial Reason Analyzer</h2>
+                    <div class="form-group">
+                        <label>Search Denial Code (e.g. CO-4, PR-1)</label>
+                        <input type="text" id="denial-search" placeholder="Type to search...">
+                    </div>
+                    <div id="denial-result" class="denial-result-box" style="display:none;">
+                        <h3 id="denial-code"></h3>
+                        <p id="denial-desc"></p>
+                        <div class="recommendation">
+                            <strong>Recommended Action:</strong>
+                            <p id="denial-action"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Payer Call Log & Phone Directory -->
+                <div id="view-callog" class="view-section" style="display:none; padding: 0; margin: -3rem; height: calc(100% + 6rem); border-radius: 0 16px 16px 0; overflow: hidden;">
+                    <div style="display: flex; height: 100%; min-height: 80vh;">
+                        
+                        <!-- Left Fixed Sidebar for Payers -->
+                        <div style="width: 250px; background: rgba(0,0,0,0.3); border-right: 1px solid var(--border-color); display: flex; flex-direction: column;">
+                            <div style="padding: 1.5rem; border-bottom: 1px solid var(--border-color);">
+                                <h3 style="margin: 0; font-size: 1.1rem;">Payer Directory</h3>
+                                <input type="text" id="dir-search" placeholder="Search..." style="margin-top: 1rem; width: 100%; padding: 0.5rem; font-size: 0.9rem;" oninput="renderDirectory()">
+                            </div>
+                            <div id="dir-list" style="flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                                <!-- populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Right Area for Info and Form -->
+                        <div style="flex: 1; padding: 2rem; overflow-y: auto; display: flex; flex-direction: column; gap: 2rem; border-radius: 0 12px 12px 0;">
+                            
+                            <!-- Directory Results Card -->
+                            <div id="dir-details" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; display: none;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+                                    <div>
+                                        <h2 id="dd-name" style="margin: 0; color: var(--accent-primary);">Payer Name</h2>
+                                        <div style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.25rem;">Payer ID: <span id="dd-id" style="color: var(--text-primary);">--</span></div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-size: 1.25rem; font-weight: 600; color: #10b981;">☎ <span id="dd-phone">--</span></div>
+                                        <div style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">Fax: <span id="dd-fax">--</span></div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color);">
+                                    <div><label style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Standard TFL</label><div id="dd-tfl" style="font-weight: 500;">--</div></div>
+                                    <div><label style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Corrected Claim FL</label><div id="dd-ccfl" style="font-weight: 500;">--</div></div>
+                                    <div><label style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Appeal TFL</label><div id="dd-appeal-tfl" style="font-weight: 500;">--</div></div>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                                    <div><label style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Standard Mailing</label><div id="dd-mail" style="font-size: 0.9rem; white-space: pre-wrap; line-height: 1.4; margin-top: 0.25rem;">--</div></div>
+                                    <div><label style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Correct Claim Mail</label><div id="dd-cc-mail" style="font-size: 0.9rem; white-space: pre-wrap; line-height: 1.4; margin-top: 0.25rem;">--</div></div>
+                                    <div><label style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Appeals Mail</label><div id="dd-appeal-mail" style="font-size: 0.9rem; white-space: pre-wrap; line-height: 1.4; margin-top: 0.25rem;">--</div></div>
+                                </div>
+                                <div style="margin-top: 1rem; font-size: 0.9rem;">
+                                    <label style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Email / Portal</label><div id="dd-email" style="margin-top: 0.25rem; color: var(--accent-primary);">--</div>
+                                </div>
+                            </div>
+
+                            <div id="dir-placeholder" style="text-align: center; padding: 4rem; color: var(--text-secondary); border: 2px dashed rgba(255,255,255,0.1); border-radius: 12px; height: auto;">
+                                <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;">📞</div>
+                                <h3 style="margin-bottom: 0.5rem; color: var(--text-primary);">Select a Payer from the Directory</h3>
+                                <p style="font-size: 0.9rem;">View contact details and auto-fill the Call Log.</p>
+                            </div>
+
+                            <!-- Call Log Form -->
+                            <div style="background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
+                                <h3 style="margin-top: 0;">Log a Call</h3>
+                                <form id="call-log-form">
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                        <div class="form-group" style="margin: 0;">
+                                            <label>INS Name</label>
+                                            <input type="text" id="cl-payer" required>
+                                        </div>
+                                        <div class="form-group" style="margin: 0;">
+                                            <label>PH Number</label>
+                                            <input type="text" id="cl-rep" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="margin-top: 1rem;">
+                                        <label>Quick Reach (e.g. 1* 4* 7*)</label>
+                                        <input type="text" id="cl-ref" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Comments</label>
+                                        <textarea id="cl-notes" rows="3" required placeholder="e.g. this is number od em id 001"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" style="width: auto;">Save Call Log</button>
+                                </form>
+                            </div>
+
+                            <!-- Feed -->
+                            <div>
+                                <h3 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Recent Calls</h3>
+                                <div id="call-log-feed" style="max-height: 400px; overflow-y: auto;"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 5. Daily Production Counter -->
+                <div id="view-prod" class="view-section" style="display:none;">
+                    <h2>Daily Production Counter</h2>
+                    <div class="form-group">
+                        <label>Daily Target</label>
+                        <input type="number" id="prod-target" value="40" onchange="updateProdUI()">
+                    </div>
+                    <div class="form-group">
+                        <label>Achieved Manually</label>
+                        <input type="number" id="prod-achieved" value="0" onchange="updateProdUI()">
+                    </div>
+
+                    <div class="tracker-info">
+                        <h3>Status: <span id="prod-text">0 / 40 Claims (0%)</span></h3>
+                    </div>
+                    <div class="tracker-bar">
+                        <div class="tracker-fill" id="prod-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <!-- 6. Login Time & Break Tracker -->
+                <div id="view-time" class="view-section" style="display:none;">
+                    <h2>Login Time & Break Tracker</h2>
+
+                    <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 300px;">
+                            <div class="timer-display" id="timer-display">00:00:00</div>
+                            <div class="timer-status" id="timer-status">Clocked Out</div>
+
+                            <div class="tracker-info"><h3>Work Goal: <span>08:15:00</span></h3></div>
+                            <div class="tracker-info"><h3>Time Left: <span id="time-left">08:15:00</span></h3></div>
+                            
+                            <div class="tracker-info" style="margin-top: 1.5rem;"><h3>Break Allowance: <span>01:15:00</span></h3></div>
+                            <div class="tracker-info"><h3>Break Time Left: <span id="break-left">01:15:00</span></h3></div>
+                        </div>
+
+                        <div style="flex: 1; min-width: 300px; border-left: 1px solid var(--border-color); padding-left: 2rem;">
+                            <div class="timer-controls">
+                                <button class="btn btn-primary" id="btn-punch-in">Punch In</button>
+                                <button class="btn btn-secondary" id="btn-break" disabled>Start Break</button>
+                                <button class="btn btn-danger" id="btn-punch-out" disabled>Punch Out</button>
+                            </div>
+
+                            <div id="break-reason-container" style="display:none; margin-top: 1.5rem;">
+                                <div class="form-group">
+                                    <label>Reason for past break</label>
+                                    <input type="text" id="break-reason" placeholder="e.g. Lunch, Bio, Meeting">
+                                </div>
+                                <button class="btn btn-primary" id="btn-submit-break" style="width: 100%;">Submit Reason & Resume Work</button>
+                            </div>
+
+                            <div style="margin-top: 2rem;">
+                                <h3>Breaks Taken (<span id="break-count">0</span>)</h3>
+                                <div id="break-list" class="feed-container" style="max-height: 200px; overflow-y: auto; margin-top: 0.5rem; padding-right: 0.5rem;">
+                                    <p style="color: var(--text-secondary); font-size: 0.9em;">No breaks taken yet.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. Julian Calendar Calculator -->
+                <div id="view-julian" class="view-section" style="display:none;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+                        <h2 style="margin: 0;">Julian Calendar Calculator</h2>
+                        <div style="width: 250px;">
+                            <label style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; display: block;">Output Date Format</label>
+                            <select id="julian-format" style="padding: 0.4rem; font-size: 0.85rem;" onchange="fromJulian()">
+                                <option value="MM/DD/YYYY">MM/DD/YYYY (e.g. 08/01/2026)</option>
+                                <option value="DD/MM/YYYY">DD/MM/YYYY (e.g. 01/08/2026)</option>
+                                <option value="WORD">Word Format (e.g. August 01, 2026)</option>
+                                <option value="DAY_WORD">Day & Word (e.g. Sat Aug 01 2026)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap: 2rem;">
+                        <!-- Julian to Standard -->
+                        <div style="flex: 1;">
+                            <h3>Number to Date</h3>
+                            <div class="form-group">
+                                <label>Day of Year (001-366)</label>
+                                <input type="number" id="julian-day" placeholder="e.g. 001">
+                            </div>
+                            <div class="form-group">
+                                <label>Reference Year</label>
+                                <select id="julian-year">
+                                    <option value="2020">2020</option>
+                                    <option value="2021">2021</option>
+                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2026" selected>2026</option>
+                                    <option value="2027">2027</option>
+                                    <option value="2028">2028</option>
+                                    <option value="2029">2029</option>
+                                    <option value="2030">2030</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-secondary" onclick="fromJulian()">Get Standard Date</button>
+                            <div id="julian-result1" class="result-box" style="display:none;"></div>
+                        </div>
+
+                        <!-- Standard to Julian -->
+                        <div style="flex: 1; border-left: 1px solid #e2e8f0; padding-left: 2rem;">
+                            <h3>Date to Number</h3>
+                            <div class="form-group">
+                                <label>Select Date</label>
+                                <input type="text" id="julian-standard" placeholder="mm/dd/yyyy">
+                            </div>
+                            <button class="btn btn-secondary" onclick="toJulian()">Get Julian Number</button>
+                            <div id="julian-result2" class="result-box" style="display:none;"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
